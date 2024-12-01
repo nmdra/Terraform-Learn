@@ -1,0 +1,10 @@
+digitalocean_api_token = "<API TOKEN>"
+# ssh_fingerprint = "<SSH_FINGERPRINT>"
+pvt_key = "ssh_key"
+new_user_name = "USERNAME"
+new_user_password = "PASSWORD"
+droplet_image = "ubuntu-22-04-x64"
+droplet_name = "serverNew"
+droplet_region = "sgp1"
+droplet_size = "s-1vcpu-512mb-10gb"
+droplet_count = 3
