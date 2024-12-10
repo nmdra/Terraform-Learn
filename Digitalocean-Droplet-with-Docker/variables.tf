@@ -31,7 +31,13 @@ variable "droplet_name" {
 
 variable "droplet_region" {
   description = "Droplet Region"
+  type = string
   default     = "sgp1"
+
+  validation {
+    condition = contains([sgp1], var.droplet_region)
+    error_message = "Invalid Region: " + var.droplet
+  }
 }
 
 variable "droplet_image" {
