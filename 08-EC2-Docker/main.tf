@@ -24,12 +24,13 @@ resource "tls_private_key" "rsa" {
 }
 
 resource "local_file" "TF-key" {
-  content  = tls_private_key.rsa.private_key_pem
-  filename = "tfkey"
+  content         = tls_private_key.rsa.private_key_pem
+  file_permission = "0400"
+  filename        = "tfkey"
 }
 
 resource "aws_instance" "Swarm" {
-  for_each        = toset(["mgr1"])
+  for_each        = toset(["mgr1", "wkr1", "wkr2"])
   ami             = "ami-01816d07b1128cd2d"
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.Swarm-sg.name]
@@ -46,6 +47,7 @@ resource "aws_instance" "Swarm" {
 
               packages:
                 - docker
+                - git
 
               runcmd:
                 - sudo systemctl enable docker
@@ -62,6 +64,11 @@ locals {
     { from_port = 8080, to_port = 8080, protocol = "tcp" },
     { from_port = 80, to_port = 80, protocol = "tcp" },
     { from_port = 443, to_port = 443, protocol = "tcp" },
+    { from_port = 2377, to_port = 2377, protocol = "tcp" }, # Swarm management
+    { from_port = 7946, to_port = 7946, protocol = "tcp" }, # Swarm communication (TCP)
+    { from_port = 7946, to_port = 7946, protocol = "udp" }, # Swarm communication (UDP)
+    { from_port = 4789, to_port = 4789, protocol = "udp" }, # Overlay network
+    { from_port = 0, to_port = 0, protocol = "50" },        # ESP protocol
   ]
 
   egress_rules = [
